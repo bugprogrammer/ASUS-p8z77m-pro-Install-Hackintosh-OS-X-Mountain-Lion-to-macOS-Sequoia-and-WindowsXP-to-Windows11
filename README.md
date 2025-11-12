@@ -4,6 +4,9 @@
 
 ![](images/desktop/操作系统九宫格.png)
 
+# B站演示视频
+https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed018369ab5e26
+
 # 配置清单
 
 * 主板： 华硕p8z77m-pro
