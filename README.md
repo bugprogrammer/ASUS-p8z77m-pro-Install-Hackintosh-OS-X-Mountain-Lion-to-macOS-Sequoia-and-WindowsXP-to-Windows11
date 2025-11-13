@@ -86,7 +86,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 ### 10.8下的声卡驱动
 
-* 华硕的 p8z77m-pro主板的声卡是alc892，AppleALC对于此声卡的支持起始于10.9，笔者自行修改编译了支持alc892声卡在10.8下的AppleALC，在EFI里，直接用即可。
+* 华硕的 p8z77m-pro主板的声卡是alc892，AppleALC对于此声卡的支持起始于10.9，笔者自行修改编译了支持alc892声卡在10.8下的AppleALC，在EFI里，直接用即可。<font color=#A52A2A >(已经向原作者提交了pr，希望能够合并到主分支，链接如下：https://github.com/acidanthera/AppleALC/pull/947)</font >
 
 ### 10.8下实现4K 60hz Hidpi
 
