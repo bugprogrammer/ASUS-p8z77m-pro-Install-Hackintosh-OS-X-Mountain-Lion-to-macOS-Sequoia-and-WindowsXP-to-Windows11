@@ -46,22 +46,6 @@
 				<key>Path</key>
 				<string>SSDT-DMAR.aml</string>
 			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>disable_gpu_gt440.aml</string>
-				<key>Enabled</key>
-				<false/>
-				<key>Path</key>
-				<string>disable_gpu_gt440.aml</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>disable_gpu_gtx770.aml</string>
-				<key>Enabled</key>
-				<false/>
-				<key>Path</key>
-				<string>disable_gpu_gtx770.aml</string>
-			</dict>
 		</array>
 		<key>Delete</key>
 		<array>
@@ -212,6 +196,30 @@
 		<array>
 			<dict>
 				<key>Arch</key>
+				<string>x86_64</string>
+				<key>Comment</key>
+				<string>Reroute HW_BID to OC_BID</string>
+				<key>Count</key>
+				<integer>0</integer>
+				<key>Enabled</key>
+				<true/>
+				<key>Find</key>
+				<data>SABXAF8AQgBJAEQA</data>
+				<key>Identifier</key>
+				<string>Apple</string>
+				<key>Limit</key>
+				<integer>0</integer>
+				<key>Mask</key>
+				<data></data>
+				<key>Replace</key>
+				<data>TwBDAF8AQgBJAEQA</data>
+				<key>ReplaceMask</key>
+				<data></data>
+				<key>Skip</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Arch</key>
 				<string>Any</string>
 				<key>Comment</key>
 				<string>macOS to hacOS</string>
@@ -253,30 +261,6 @@
 				<data></data>
 				<key>Replace</key>
 				<data>AC4ALgAuAC4ALgAuAC4ALgAuAC4ALgAuAC4ALgAuAC4ALgAuAC4ALgAu</data>
-				<key>ReplaceMask</key>
-				<data></data>
-				<key>Skip</key>
-				<integer>0</integer>
-			</dict>
-			<dict>
-				<key>Arch</key>
-				<string>x86_64</string>
-				<key>Comment</key>
-				<string>Reroute HW_BID to OC_BID</string>
-				<key>Count</key>
-				<integer>0</integer>
-				<key>Enabled</key>
-				<true/>
-				<key>Find</key>
-				<data>SABXAF8AQgBJAEQA</data>
-				<key>Identifier</key>
-				<string>Apple</string>
-				<key>Limit</key>
-				<integer>0</integer>
-				<key>Mask</key>
-				<data></data>
-				<key>Replace</key>
-				<data>TwBDAF8AQgBJAEQA</data>
 				<key>ReplaceMask</key>
 				<data></data>
 				<key>Skip</key>
@@ -722,68 +706,7 @@
 			</dict>
 		</array>
 		<key>Patch</key>
-		<array>
-			<dict>
-				<key>Arch</key>
-				<string>Any</string>
-				<key>Base</key>
-				<string></string>
-				<key>Comment</key>
-				<string>change _OSI from Darwin to Darw12</string>
-				<key>Count</key>
-				<integer>0</integer>
-				<key>Enabled</key>
-				<false/>
-				<key>Find</key>
-				<data>RGFyd2lu</data>
-				<key>Identifier</key>
-				<string>com.apple.driver.AppleACPIPlatform</string>
-				<key>Limit</key>
-				<integer>0</integer>
-				<key>Mask</key>
-				<data></data>
-				<key>MaxKernel</key>
-				<string></string>
-				<key>MinKernel</key>
-				<string>12.0.0</string>
-				<key>Replace</key>
-				<data>RGFydzEy</data>
-				<key>ReplaceMask</key>
-				<data></data>
-				<key>Skip</key>
-				<integer>0</integer>
-			</dict>
-			<dict>
-				<key>Arch</key>
-				<string>Any</string>
-				<key>Base</key>
-				<string></string>
-				<key>Comment</key>
-				<string>change _OSI from Darwin to Darw11</string>
-				<key>Count</key>
-				<integer>0</integer>
-				<key>Enabled</key>
-				<false/>
-				<key>Find</key>
-				<data>RGFyd2lu</data>
-				<key>Identifier</key>
-				<string>com.apple.driver.AppleACPIPlatform</string>
-				<key>Limit</key>
-				<integer>0</integer>
-				<key>Mask</key>
-				<data></data>
-				<key>MaxKernel</key>
-				<string>11.99.99</string>
-				<key>MinKernel</key>
-				<string></string>
-				<key>Replace</key>
-				<data>RGFydzEx</data>
-				<key>ReplaceMask</key>
-				<data></data>
-				<key>Skip</key>
-				<integer>0</integer>
-			</dict>
-		</array>
+		<array/>
 		<key>Quirks</key>
 		<dict>
 			<key>AppleCpuPmCfgLock</key>

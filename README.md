@@ -124,6 +124,10 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
   
   ![](images/OpenCore/Skip%20Board%20ID%20check.png)
 
+# 2025.11.15更新
+
+删除refind无用文件夹，修复refind进入极慢的bug(B站视频后续替换)
+
 # 系统桌面截图
 
 ![](images/desktop/xp桌面截屏.png)
