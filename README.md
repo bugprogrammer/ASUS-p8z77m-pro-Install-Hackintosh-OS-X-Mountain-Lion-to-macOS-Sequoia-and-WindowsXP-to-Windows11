@@ -126,9 +126,9 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 # 2025.11.15更新
 
-* 删除refind无用文件夹，修复refind进入极慢的bug(B站视频后续替换)
+* 删除refind无用文件夹，修复refind进入极慢的bug(B站视频已经更新)
 
-* 修复OS X 10.9启动无logo，直到登录界面才亮屏的bug(B站视频后续替换)
+* 修复OS X 10.9启动无logo，直到登录界面才亮屏的bug(B站视频已经更新)
 
 # 系统桌面截图
 
