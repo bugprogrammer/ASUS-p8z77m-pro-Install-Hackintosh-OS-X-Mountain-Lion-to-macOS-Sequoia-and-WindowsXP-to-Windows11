@@ -22,7 +22,9 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * SSD2：三星870evo sata 2T
 
-* 无线网卡：fenvi-t919
+* 无线网卡1：fenvi-t919
+
+* 无线网卡2:   bcm94331csax
 
 * 显示器：dell S2725QS 4K
 
@@ -42,7 +44,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 独显
 
-* 4K hidpi显示(接显示器完美，接采集卡录屏无法hidpi)
+* 4K hidpi显示
 
 * 有线网卡
 
@@ -62,39 +64,65 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 ## bug
 
-* 在10.8下切换系统，必须先切换到10.9再切换到其他系统，否则其他系统搜不到WIFI信号(包括Windows)，10.8系统会把华硕BE86U的5Ghz WiFi识别成企业级无法使用，连接2.4Ghz WIFI正常。
+* ~~在10.8下切换系统，必须先切换到10.9再切换到其他系统，否则其他系统搜不到WIFI信号(包括Windows)，10.8系统会把华硕BE86U的5Ghz WiFi识别成企业级无法使用，连接2.4Ghz WIFI正常。~~   已修复。
+* 10.8系统较老，不识别WPA2/WPA3-Personal协议。设置一个使用WPA2协议的SSID专供老系统使用即可。
 
 # 构建重点
 
-### Bootloader 选择
+## Bootloader 选择
 
-* OpenCore 用于引导黑苹果以及refind
+* ~~OpenCore 用于引导黑苹果以及refind~~ 
   
-  * OpenCore 添加refind启动项
+  * ~~OpenCore 添加refind启动项~~
     
-    Misc->BlessOverride 下加入条目 \EFI\EFI\refind\refind_x64.efi 即可
+    ~~Misc->BlessOverride 下加入条目 \EFI\EFI\refind\refind_x64.efi 即可~~
+  
+  * ~~refind用于引导mbr分区表上的Windows XP~~    
+    
+    ```diff
+    - timeout -1 #隐藏refind ui，直接进入目标系统
+    - scanfor manual hdbios #仅搜索传统bios引导项
+    - dont_scan_volumes "2TB" #删除不需要的引导项，禁止扫描指定硬盘(引号里添加引导项名称的子集)
+    ```
 
-* refind用于引导mbr分区表上的Windows XP
+* OpenCore用于引导OS X 10.8-macOS 15以及OpenShell工具
+  
+  * 将仓库中的.contentVisibility文件拷贝到vista/win7的EFI/Microsoft/Boot中以在OC选择菜单中隐藏vista/win7。
+  
+  * 将仓库中的.contentDetails文件拷贝到 win8-win11的EFI/Microsoft/Boot中，并且修改其内容，如Windows 8，即可自定义OC选择菜单中Windows系统名称。
+  
+  * 将仓库中的 .contentFlavour文件拷贝到 win8-win11的EFI/Microsoft/Boot中，并且修改其内容，如Windows8:Windows，即可自定义OC选择菜单中Windows系统的图标，假定图标名为Windows8.icns。
+
+* xorboot用于引导legacy系统(vista,win7)、refind(启动xp)以及OpenShell工具
+  
+  * xorboot的安装使用极其简单，完全GUI配置，0代码，添加vista和win7的bootmgfw.efi文件、refind的refind_x64.efi文件以及OpenShell.efi即可。
   
   * refind.conf 重要设置
     
     ```
     timeout -1 #隐藏refind ui，直接进入目标系统
-    scanfor hdbios #仅搜索传统bios引导项
+    scanfor manual hdbios #仅搜索传统bios引导项以及手动设置项
     dont_scan_volumes "2TB" #删除不需要的引导项，禁止扫描指定硬盘(引号里添加引导项名称的子集)
+    uefi_deep_legacy_scan 1 #建议设置，否则可能找不到xp
     ```
 
-### 10.8下的声卡驱动
+* OpenShell工具及其重要，后面讲。
+
+## 10.8下的声卡驱动
 
 * 华硕的 p8z77m-pro主板的声卡是alc892，AppleALC对于此声卡的支持起始于10.9，笔者自行修改编译了支持alc892声卡在10.8下的AppleALC，在EFI里，直接用即可。(已经向原作者提交了pr，希望能够合并到主分支，链接如下：https://github.com/acidanthera/AppleALC/pull/947)
+  
+  ---
+  
+  2026.5.24更新：原作者已合并到主分支，直接下载最新的官方AppleALC即可。
 
-### 10.8下实现4K 60hz Hidpi
+## 10.8下实现4K 60hz Hidpi
 
 > 首先Mac系统是在10.9.3开始正式支持的4K 60hz hidpi，10.7和10.8只支持低分辨率的Retina，但是物理分辨率无法输出4K，因为当时的白苹果配备的显卡也没有支持4K输出的，黑苹果可用显卡要输出4K，最早的是Nvidia gtx 600系列，而600系列支持的最初版Mac系统是10.8，故而想要4K 60hz hidpi，最起码需要10.8系统起步，显卡支持4K输出是最基本的前提要求。因为10.8没有原生支持4K输出，所以要通过第三方方案实现4K 60hz hidpi。
 
-#### 实现方案
+### 实现方案
 
-> 由于我的gtx 770 在10.8下最大只能识别2K分辨率，所以要先解决4K输出，再通过命令开启hidpi，具体方案如下。
+> 由于笔者的gtx 770 在10.8下最大只能识别2K分辨率，所以要先解决4K输出，再通过命令开启hidpi，具体方案如下。
 
 * 安装Nvidia webdriver，仓库里已经提供。
 
@@ -108,15 +136,15 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 设置->显示器里面有两个1080p，一个一个测试，有一个是hidpi (因为毕竟是第三方方案，多少有点bug，所幸效果非常完美)。
 
-##### 至此，您已经成功的在10.8下实现了4K 60hz hidpi。
+#### 至此，您已经成功的在10.8下实现了4K 60hz hidpi。
 
-### 关于SMBIOS选择
+## 关于SMBIOS选择
 
-#### 安装系统
+### 安装系统
 
 请选择系统版本支持的SMBIOS
 
-#### 安装完成
+### 安装完成
 
 * 设置SMBIOS为iMac13,2
 
@@ -130,29 +158,296 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 修复OS X 10.9启动无logo，直到登录界面才亮屏的bug(B站视频已经更新)
 
+# 2026.5.24更新
+
+## 使用第三方OC主题，提升美观程度
+
+* 见EFI
+
+## 解决10.8切换其他系统，wifi失效问题
+
+> 这个问题的成因是OS X 10.8的94630驱动自身有bug，不完美，据说当年的iMac在10.8上用过94360，镜像是定制的，我没下载到。于是我添加了一张bcm94331csax专门用于10.8。
+
+* 添加一张bcm94331csax网卡，不插蓝牙线，这张卡的wifi，将用于OS X 10.8和XP(xp没有96360的驱动)。蓝牙方面，所有系统用fenvi-t919的蓝牙，即双无线网卡+单蓝牙
+
+* 在OC的Kernel Patch下添加如下条目已实现macOS版本区分(10.8->Darw12，其他->Darwin)
+  
+  ![](images/OpenCore/Change%20_OSI%20from%20Darwin%20to%20Darw12.png)
+
+* 加入如下SSDT以根据系统版本禁用多余网卡(10.8禁用fenvi-t919，其他macOS禁用bcm94331)
+  
+  ```
+  DefinitionBlock ("", "SSDT", 2, "HACK", "WIFISEL", 0x00000000)
+  {
+      External (_SB_.PCI0.PEG1, DeviceObj)
+      External (_SB_.PCI0.RP01.PXSX, DeviceObj)
+  
+      Scope (_SB.PCI0.RP01.PXSX)
+      {
+          Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+          {
+              If ((Arg2 == Zero))
+              {
+                  Return (Buffer (One)
+                  {
+                       0x03                                           
+                  })
+              }
+  
+              If (_OSI ("Darw12"))
+              {
+                  Return (Package (0x0C)
+                  {
+                      "device-id", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0x00, 0x00                           
+                      }, 
+  
+                      "vendor-id", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0x00, 0x00                           
+                      }, 
+  
+                      "class-code", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0xFF, 0xFF                           
+                      }, 
+  
+                      "compatible", 
+                      "pci14e4,ffff", 
+                      "name", 
+                      "pci14e4,ffff", 
+                      "model", 
+                      "94360 Disabled for 10.8"
+                  })
+              }
+  
+              Return (Package (0x02)
+              {
+                  "model", 
+                  "BCM4360 802.11ac Wireless"
+              })
+          }
+      }
+  
+      Scope (_SB.PCI0.PEG1)
+      {
+          Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+          {
+              If ((Arg2 == Zero))
+              {
+                  Return (Buffer (One)
+                  {
+                       0x03                                             
+                  })
+              }
+  
+              If (_OSI ("Darwin"))
+              {
+                  Return (Package (0x0C)
+                  {
+                      "device-id", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0x00, 0x00                           
+                      }, 
+  
+                      "vendor-id", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0x00, 0x00                           
+                      }, 
+  
+                      "class-code", 
+                      Buffer (0x04)
+                      {
+                           0xFF, 0xFF, 0xFF, 0xFF                           
+                      }, 
+  
+                      "compatible", 
+                      "pci14e4,ffff", 
+                      "name", 
+                      "pci14e4,ffff", 
+                      "model", 
+                      "94331 Disabled for Modern OS"
+                  })
+              }
+  
+              Return (Package (0x02)
+              {
+                  "model", 
+                  "BCM4331 802.11n Wireless"
+              })
+          }
+      }
+  }
+  ```
+
+* 在其他需要判断OS类型的SSDT中，将If (_OSI ("Darwin"))改成If ((_OSI ("Darwin") || _OSI ("Darw12")))
+
+### 至此，随便切换系统，wifi也不会失效了。
+
+## 解决10.8-10.11关于本机不显示年份
+
+> macOS关于本机的年份是通过API返回的，这些系统由于年代久远，已无法正常访问API网站，所以我们要手动编辑本地文件以添加年份。
+
+* 在正常工作的现代操作系统上运行如下命令以获取应该显示的内容(cc=xxxx，xxxx为所选机型序列号后四位，10.11以及更早系统访问的API有语言参数，10.12开始没有了，所以老OS X版本的年份是系统语言，新版是英文)
+  
+  ```
+  curl -s "https://support-sp.apple.com/sp/product?cc=DNCW&lang=zh-Hans_CN" | sed -n 's/.*<configCode>\(.*\)<\/configCode>.*/\1/p'
+  ```
+
+* 记录返回值，如 iMac（27 英寸，2012 年末）
+
+* 打开SMBIOS年份修复文件夹中的的plist文件，注意系统版本，修改序列号后四位，语言，年份三个信息。修改好的类似下图，两张图分别为10.8的和10.9-10.11的
+  
+  ![](images/SMBIOS/10.8.png)  
+  
+  ![](images/SMBIOS/10.9-10.11.png)
+
+* 将改好的plist文件覆盖到 ~/Library/Preferences并重启，你会发现OS X 10.8-10.11的关于本机年份恢复了
+
+## 解决csm开启video legacy以后，OC选择界面分辨率极低，macOS图标变扁，Windows图标偏移向左上角等问题
+
+> 众所周知，xp/vista/win7是不能在纯UEFI模式下启动的，需要设置csm下的video为legacy，这样做的代价是无法获得高清的主板logo，Windows logo，macOS logo以及引导器高清图标，现在我们解决这个问题。
+
+> 前提：1 机器支持UEFI    2 显卡支持UEFI或者刷过vbios以支持UEFI
+
+> 核心思路：永远不要想着在纯UEFI下启动xp/vista/win7。我们使用OC引导win8-win11以及OS X 10.8-macOS 15，csm的video设置为UEFI。使用xorboot引导xp/vista/win7，csm的video设置为legacy，这样自然是完美的，我们要做的就是把这个修改bios的动作自动化。
+
+* 升级显卡的GOP模块(如果你的显卡在纯UEFI下亮机并且可以全高清显示，则跳过此步骤。笔者的gtx 770开纯UEFI点不亮)
+  
+  * 用GPU-Z导出显卡vbios
+  
+  * 打开笔者提供的GOP_Updater，将vbios文件拖拽到GOPupd.bat上，按照提示升级GOP模块，会生成一个新的vbios，把它重命名为1.rom以方便刷写
+  
+  * 使用nvflash刷写新的vbios，Windows打开管理员模式的终端，输入如下命令
+    
+    > nvflash.exe -6 1.rom
+
+* 主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy和UEFI分别对应的数字如下图，UEFI 0x1，legacy 0x2
+  
+  ![](images/csm.png)
+
+* 修改BIOS设置，csm打开，启动设备控制选择UEFI and Legacy，这样可以保证mbr下的xp系统的启动。
+
+* 准备startup.nsh脚本，这个脚本做两件事
+  
+  * 用setup_var修改csm选项，如
+    
+    ```
+    setup_var.efi -r Setup:0x8CE=0x02
+    ```
+  
+  * 利用重命名efi文件的方法，修改第一启动项为OC或xorboot，完整脚本如下
+    
+    ```
+    @echo -off
+    
+    # 寻找包含我们工具包的分区
+    for %i in fs0 fs1 fs2 fs3 fs4 fs5
+        if exist %i:\EFI\tools\setup_var.efi then
+            # 锁定当前分区
+            %i:
+            goto FOUND
+        endif
+    endfor
+    
+    echo "Error: Tools partition not found."
+    goto END
+    
+    :FOUND
+    
+    # 判断当前模式
+    if exist EFI\OC\OpenCore.efi then
+       # csm video切legacy
+       # 备份OC
+       mv EFI\OC\OpenCore.efi EFI\OC\OpenCore.efi.bak > nul
+       # 恢复 xorboot
+       if exist EFI\xorboot\xorboot.efi.bak then
+          mv EFI\xorboot\xorboot.efi.bak EFI\xorboot\xorboot.efi > nul
+       endif
+       # 修改 BIOS 变量 (Video -> Legacy)
+       EFI\tools\setup_var.efi -r Setup:0x8CE=0x02 > nul
+    else
+       # csm video切uefi
+       # 恢复OC
+       if exist EFI\OC\OpenCore.efi.bak then
+          mv EFI\OC\OpenCore.efi.bak EFI\OC\OpenCore.efi > nul
+       endif
+       # 备份xorboot
+       if exist EFI\xorboot\xorboot.efi then
+          mv EFI\xorboot\xorboot.efi EFI\xorboot\xorboot.efi.bak > nul
+       endif
+       # 修改 BIOS 变量 (Legacy -> UEFI)
+       EFI\tools\setup_var.efi -r Setup:0x8CE=0x01 > nul
+    endif
+    
+    :END
+    ```
+
+* 脚本简单解释
+  
+  * 搜索存在setup_var.efi的分区并锁定
+  
+  * 判断当前模式，如果存在OpenCore.efi文件，则说明当前video是UEFI模式，反之则为legacy。
+  
+  * 基于当前模式执行不同操作
+    
+    * UEFI：将OpenCore.efi重命名为OpenCore.efi.bak，将xorboot的efi文件名称还原回xorboot.efi，相当于第一启动项改xorboot，用setup_var.efi将video设置成legacy，会自动重启，自然进入legacy模式的xorboot，进而启动xp/vista/7。
+    
+    * legacy：将OpenCore.efi.bak还原为OpenCore.efi，将xorboot.efi重命名为xorboot.efi.bak，相当于第一启动项改OC，用setup_var.efi将video设置成UEFI，会自动重启，自然进入UEFI模式的OC，进而启动现代系统。
+
+* 将startup.nsh放到EFI分区根目录，和EFI文件夹同层级
+
+* 在OC的Tools文件夹中加入OpenShell.efi文件并在config中添加此条目，参数为-nointerrupt -noconsolein -noconsoleout
+  
+  ![](images/OpenCore/OpenShell.png)
+
+* xorboot加入OpenShell条目，参数同上
+  
+  ![](images/xorboot/xorboot1.png)
+
+### 至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行根目录的startup.nsh脚本。
+
+# 引导器截图
+
+## OpenCore
+
+![](images/OpenCore/OC1.png)
+
+![](images/OpenCore/OC2.png)
+
+## XorBoot
+
+![](images/xorboot/xorboot2.png)
+
 # 系统桌面截图
 
-![](images/desktop/xp桌面截屏.png)
+![](images/desktop/xp.png)
 
-![](images/desktop/vista桌面截屏.png)
+![](images/desktop/vista.png)
 
-![](images/desktop/win7桌面截屏.png)
+![](images/desktop/win7.png)
 
-![](images/desktop/win8桌面截图.png)
+![](images/desktop/win8.png)
 
-![](images/desktop/win8.1桌面截图.png)
+![](images/desktop/win8.1.png)
 
-![](images/desktop/win10桌面截屏.png)
+![](images/desktop/win10.png)
 
-![](images/desktop/win11桌面截屏.png)
+![](images/desktop/win11.png)
 
-![](images/desktop/osx%2010.8_1.png)
+![](images/desktop/osx%2010.8.png)
 
-![](images/desktop/osx%2010.9_1.png)
+![](images/desktop/osx%2010.9.png)
 
 ![](images/desktop/osx%2010.10.png)
 
-![](images/desktop/osx%2010.11_1.png)
+![](images/desktop/osx%2010.11.png)
 
 ![](images/desktop/macOS%2010.12.png)
 
