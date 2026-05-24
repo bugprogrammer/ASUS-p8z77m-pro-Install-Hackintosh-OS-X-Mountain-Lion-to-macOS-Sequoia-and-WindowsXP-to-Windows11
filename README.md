@@ -1,6 +1,6 @@
 # ASUS-p8z77m-pro-Install-Hackintosh-OS-X-Mountain-Lion-to-macOS-Sequoia-and-WindowsXP-to-Windows11
 
-> macOS 26是Intel Mac可以使用的最后一个macOS版本，在黑苹果即将成为历史的时刻，在一台配备了4K显示器的ivy bridge计算机上以物理机的形式运行了Windows XP-Windows11的所有Windows操作系统以及所有支持4K 60hz hidpi的intel macOS操作系统。
+> macOS 26是Intel Mac可以使用的最后一个macOS版本，在即将到来的WWDC 2026上，Apple将发布macOS 27，届时将仅支持Apple Silicon Macs。在黑苹果即将成为历史的时刻，笔者在一台配备了4K显示器的ivy bridge计算机上以物理机的形式运行了包括Windows XP-Windows11的所有Windows操作系统以及所有支持4K 60hz hidpi的intel macOS操作系统。
 
 ![](images/desktop/操作系统九宫格.png)
 
@@ -24,7 +24,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 无线网卡1：fenvi-t919
 
-* 无线网卡2:   bcm94331csax
+* 无线网卡2：bcm94331csax
 
 * 显示器：dell S2725QS 4K
 
@@ -33,6 +33,20 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 * 操作系统：Windows XP-Windows11
 
 * 操作系统：OS X Mountain Lion-macOS Sequoia
+
+# 为何选择这套配置
+
+## 主板+CPU
+
+> 要同时兼容如此多的操作系统，首先要考虑一个特殊的Windows版本，即Windows Vista。Windows Vista最新原生支持的平台是ivy bridge。Haswell可以安装XP却无法稳定运行Vista，Haswell下的Vista会随机报错。所以要全面兼容xp-win11以及OS X 10.8-macOS 15，可以选择的最新平台就是ivy bridge。黑苹果方面，ivy bridge原生支持OS X 10.7-macOS 11。macOS 12-macOS 15可以用oclp搞定。因为黑苹果需求，AMD也不建议选择。
+
+## 显卡
+
+> 根据Dortania的OpenCore文档，Kepler架构的Nvidia显卡可以原生支持OS X 10.8-macOS 11，更新版本用oclp搞定。Kepler也完美支持XP-Win11。文档中还提到AMD的hd 7000系列和hd 8000系列可以原生支持OS X 10.8-macOS 12，但笔者亲测，hd 7750在OS X 10.8.5下，无法进入桌面，仅显示白屏+鼠标指针。网络上有遇到同样问题的。https://www.insanelymac.com/forum/topic/290733-hd-7950-doesnt-work-on-mac-os-x-1084/。
+
+### 无线网卡+蓝牙
+
+> 根据Dortania的OpenCore文档，fenvi-t919是很好的黑苹果无线网卡，无线+蓝牙原生免驱，Windows下win7-win11也没问题。XP/Vista的wifi/蓝牙也不重要了。但是要注意fenvi-t919在10.8下有严重bug。重启只能进入10.9(或关机)再切换其他系统，否则其他系统wifi会失效(包括Windows)，所以需要一张单独用于10.8的无线网卡并在10.8下屏蔽fenvi-t919，笔者选择的bcm94331csax，很便宜，10.8下完美免驱。这张卡我们不插蓝牙线，形成双无线网卡+单蓝牙架构，bcm94331csax的wifi还可以在XP下用。后文会详解如何使用SSDT屏蔽多余无线网卡，实现OS X 10.8下使用bcm94331csax，OS X 10.9-macOS 15下使用fenvi-t919。
 
 # 黑苹果完美程度
 
@@ -64,7 +78,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 ## bug
 
-* ~~在10.8下切换系统，必须先切换到10.9再切换到其他系统，否则其他系统搜不到WIFI信号(包括Windows)，10.8系统会把华硕BE86U的5Ghz WiFi识别成企业级无法使用，连接2.4Ghz WIFI正常。~~   已修复。
+* ~~在10.8下切换系统，必须先切换到10.9(或关机)再切换到其他系统，否则其他系统搜不到WIFI信号(包括Windows)，10.8系统会把华硕BE86U的5Ghz WiFi识别成企业级无法使用，连接2.4Ghz WIFI正常。~~   已修复。
 * 10.8系统较老，不识别WPA2/WPA3-Personal协议。设置一个使用WPA2协议的SSID专供老系统使用即可。
 
 # 构建重点
@@ -91,7 +105,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
   
   * 将仓库中的.contentDetails文件拷贝到 win8-win11的EFI/Microsoft/Boot中，并且修改其内容，如Windows 8，即可自定义OC选择菜单中Windows系统名称。
   
-  * 将仓库中的 .contentFlavour文件拷贝到 win8-win11的EFI/Microsoft/Boot中，并且修改其内容，如Windows8:Windows，即可自定义OC选择菜单中Windows系统的图标，假定图标名为Windows8.icns。
+  * 将仓库中的 .contentFlavour文件拷贝到 win8-win11的EFI/Microsoft/Boot中，并且修改其内容，如Windows8:Windows，即可自定义OC选择菜单中Windows系统的图标，假定系统图标名为Windows8.icns。
 
 * xorboot用于引导legacy系统(vista,win7)、refind(启动xp)以及OpenShell工具
   
@@ -164,13 +178,13 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 见EFI
 
-## 解决10.8切换其他系统，wifi失效问题
+## 解决10.8必须切换到10.9(或关机)，再切换其他系统，否则其他系统wifi失效问题
 
 > 这个问题的成因是OS X 10.8的94630驱动自身有bug，不完美，据说当年的iMac在10.8上用过94360，镜像是定制的，我没下载到。于是我添加了一张bcm94331csax专门用于10.8。
 
-* 添加一张bcm94331csax网卡，不插蓝牙线，这张卡的wifi，将用于OS X 10.8和XP(xp没有96360的驱动)。蓝牙方面，所有系统用fenvi-t919的蓝牙，即双无线网卡+单蓝牙
+* 添加一张bcm94331csax网卡，不插蓝牙线，这张卡的wifi，将用于OS X 10.8和XP(xp没有96360的驱动)。蓝牙方面，所有系统用fenvi-t919的蓝牙，即双无线网卡+单蓝牙架构
 
-* 在OC的Kernel Patch下添加如下条目已实现macOS版本区分(10.8->Darw12，其他->Darwin)
+* 在OC的Kernel Patch下添加如下条目以实现macOS版本区分(10.8->Darw12，其他->Darwin)
   
   ![](images/OpenCore/Change%20_OSI%20from%20Darwin%20to%20Darw12.png)
 
@@ -294,7 +308,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 > macOS关于本机的年份是通过API返回的，这些系统由于年代久远，已无法正常访问API网站，所以我们要手动编辑本地文件以添加年份。
 
-* 在正常工作的现代操作系统上运行如下命令以获取应该显示的内容(cc=xxxx，xxxx为所选机型序列号后四位，10.11以及更早系统访问的API有语言参数，10.12开始没有了，所以老OS X版本的年份是系统语言，新版是英文)
+* 在正常工作的现代操作系统上运行如下命令以获取应该显示的内容(cc=xxxx，xxxx为所选机型序列号后四位，10.11以及更早系统访问的API有语言参数，10.12开始没有了，所以老OS X版本关于本机的年份是系统语言，新版是英文)
   
   ```
   curl -s "https://support-sp.apple.com/sp/product?cc=DNCW&lang=zh-Hans_CN" | sed -n 's/.*<configCode>\(.*\)<\/configCode>.*/\1/p'
@@ -310,15 +324,15 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 将改好的plist文件覆盖到 ~/Library/Preferences并重启，你会发现OS X 10.8-10.11的关于本机年份恢复了
 
-## 解决csm开启video legacy以后，OC选择界面分辨率极低，macOS图标变扁，Windows图标偏移向左上角等问题
+## 解决csm开启video legacy以后，OC选择界面分辨率极低，macOS图标扁平，Windows图标偏移向左上角等问题
 
-> 众所周知，xp/vista/win7是不能在纯UEFI模式下启动的，需要设置csm下的video为legacy，这样做的代价是无法获得高清的主板logo，Windows logo，macOS logo以及引导器高清图标，现在我们解决这个问题。
+> 众所周知，xp/vista/win7是不能在纯UEFI模式下启动的，需要设置csm下的video为legacy，这样做的代价是无法获得高清的主板logo，Windows logo，macOS logo以及引导器高清图标，并且Windows logo会偏移到左上角，macOS logo会扁平。现在我们解决这个问题。
 
 > 前提：1 机器支持UEFI    2 显卡支持UEFI或者刷过vbios以支持UEFI
 
-> 核心思路：永远不要想着在纯UEFI下启动xp/vista/win7。我们使用OC引导win8-win11以及OS X 10.8-macOS 15，csm的video设置为UEFI。使用xorboot引导xp/vista/win7，csm的video设置为legacy，这样自然是完美的，我们要做的就是把这个修改bios的动作自动化。
+> 核心思路：永远不要想着在纯UEFI下启动xp/vista/win7。我们使用OC引导win8-win11以及OS X 10.8-macOS 15，csm的video设置为UEFI。使用xorboot引导xp/vista/win7，csm的video设置为legacy，这样自然是完美的，传统操作系统和现代操作系统各得其所。我们要做的就是把这个修改bios的动作自动化。
 
-* 升级显卡的GOP模块(如果你的显卡在纯UEFI下亮机并且可以全高清显示，则跳过此步骤。笔者的gtx 770开纯UEFI点不亮)
+* 升级显卡的GOP模块(如果你的显卡在纯UEFI下可以点亮并且可以全高清显示OC图标，Windows/macOS的logo也不会偏移，扁平，则跳过此步骤。笔者的gtx 770开纯UEFI点不亮)
   
   * 用GPU-Z导出显卡vbios
   
@@ -328,11 +342,11 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
     
     > nvflash.exe -6 1.rom
 
-* 主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy和UEFI分别对应的数字如下图，UEFI 0x1，legacy 0x2
+* 主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy only和UEFI only分别对应的数字如下图，UEFI only 0x1，legacy only 0x2
   
   ![](images/csm.png)
 
-* 修改BIOS设置，csm打开，启动设备控制选择UEFI and Legacy，这样可以保证mbr下的xp系统的启动。
+* 修改BIOS设置，将csm打开，启动设备控制选择UEFI and Legacy，这样可以保证mbr下的xp系统的启动。并且把第一第二启动项分别设置为OC和xorboot。
 
 * 准备startup.nsh脚本，这个脚本做两件事
   
@@ -401,7 +415,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
     
     * legacy：将OpenCore.efi.bak还原为OpenCore.efi，将xorboot.efi重命名为xorboot.efi.bak，相当于第一启动项改OC，用setup_var.efi将video设置成UEFI，会自动重启，自然进入UEFI模式的OC，进而启动现代系统。
 
-* 将startup.nsh放到EFI分区根目录，和EFI文件夹同层级
+* 将startup.nsh放到EFI分区(和OpenShell.efi文件同分区)根目录，和EFI文件夹同层级
 
 * 在OC的Tools文件夹中加入OpenShell.efi文件并在config中添加此条目，参数为-nointerrupt -noconsolein -noconsoleout
   
@@ -411,7 +425,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
   
   ![](images/xorboot/xorboot1.png)
 
-### 至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行根目录的startup.nsh脚本。
+### 至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行同分区根目录的startup.nsh脚本。
 
 # 引导器截图
 
