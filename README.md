@@ -1,6 +1,6 @@
 # ASUS-p8z77m-pro-Install-Hackintosh-OS-X-Mountain-Lion-to-macOS-Sequoia-and-WindowsXP-to-Windows11
 
-> macOS 26是Intel Mac可以使用的最后一个macOS版本，在即将到来的WWDC 2026上，Apple将发布macOS 27，届时将仅支持Apple Silicon Macs。在黑苹果即将成为历史的时刻，笔者在一台配备了4K显示器的ivy bridge计算机上以物理机的形式运行了包括Windows XP-Windows11的所有Windows操作系统以及所有支持4K 60hz hidpi的intel macOS操作系统。
+> macOS 26是Intel Mac可以使用的最后一个macOS版本，在即将到来的WWDC 2026上，Apple将发布macOS 27，届时将仅支持Apple Silicon Macs。在黑苹果即将成为历史的时刻，笔者在一台配备了4K显示器的ivy bridge计算机上以物理机的形式安装并运行了包括Windows XP-Windows11的所有Windows操作系统以及所有支持4K 60hz hidpi的intel macOS操作系统。
 
 ![](images/desktop/操作系统九宫格.png)
 
@@ -38,17 +38,17 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 ## 主板+CPU
 
-> 要同时兼容如此多的操作系统，首先要考虑一个特殊的Windows版本，即Windows Vista。Windows Vista最新原生支持的平台是ivy bridge。Haswell可以安装XP却无法稳定运行Vista，Haswell下的Vista会随机报错。所以要全面兼容xp-win11以及OS X 10.8-macOS 15，可以选择的最新平台就是ivy bridge。黑苹果方面，ivy bridge原生支持OS X 10.7-macOS 11。macOS 12-macOS 15可以用oclp搞定。因为黑苹果需求，AMD也不建议选择。
+> 要同时兼容如此多的操作系统，首先要考虑一个特殊的Windows版本，即Windows Vista。Windows Vista最新原生支持的平台是ivy bridge。Haswell可以安装XP却无法稳定运行Vista，Haswell下的Vista会随机报错。所以要全面兼容xp-win11以及OS X 10.8-macOS 15，可以选择的最新平台就是ivy bridge。黑苹果方面，ivy bridge原生支持OS X 10.7-macOS 11。macOS 12-macOS 15可以用oclp搞定。因为黑苹果需求，AMD处理器也不建议选择。
 
 ## 显卡
 
-> 根据Dortania的OpenCore文档，Kepler架构的Nvidia显卡可以原生支持OS X 10.8-macOS 11，更新版本用oclp搞定。Kepler也完美支持XP-Win11。文档中还提到AMD的hd 7000系列和hd 8000系列可以原生支持OS X 10.8-macOS 12，但笔者亲测，hd 7750在OS X 10.8.5下，无法进入桌面，仅显示白屏+鼠标指针。网络上有遇到同样问题的。https://www.insanelymac.com/forum/topic/290733-hd-7950-doesnt-work-on-mac-os-x-1084/。
+> 根据Dortania的OpenCore文档，Kepler架构的Nvidia显卡可以原生支持OS X 10.8-macOS 11，更新版本用oclp搞定。Kepler也完美支持XP-Win11。文档中还提到AMD的HD 7000系列和HD 8000系列可以原生支持OS X 10.8-macOS 12，但笔者亲测，HD 7750在OS X 10.8.5下，无法进入桌面，仅显示白屏+鼠标指针。网络上有遇到同样问题的。链接如下：https://www.insanelymac.com/forum/topic/290733-hd-7950-doesnt-work-on-mac-os-x-1084/。
 
 ### 无线网卡+蓝牙
 
 > 根据Dortania的OpenCore文档，fenvi-t919是很好的黑苹果无线网卡，无线+蓝牙原生免驱，Windows下win7-win11也没问题。XP/Vista的wifi/蓝牙也不重要了。但是要注意fenvi-t919在10.8下有严重bug。重启只能进入10.9(或关机)再切换其他系统，否则其他系统wifi会失效(包括Windows)，所以需要一张单独用于10.8的无线网卡并在10.8下屏蔽fenvi-t919，笔者选择的bcm94331csax，很便宜，10.8下完美免驱。这张卡我们不插蓝牙线，形成双无线网卡+单蓝牙架构，bcm94331csax的wifi还可以在XP下用。后文会详解如何使用SSDT屏蔽多余无线网卡，实现OS X 10.8下使用bcm94331csax，OS X 10.9-macOS 15下使用fenvi-t919。
 
-# 黑苹果完美程度
+# 黑苹果完美程度(未测试需要Apple ID的功能)
 
 ## 正常工作：
 
@@ -83,6 +83,40 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 # 构建重点
 
+## BIOS设置
+
+### 处理器设置
+
+* VT-d->开启(笔者的主板BIOS没有此选项，但默认开启了)
+
+### 显卡设置
+
+* 首选显卡->PCIE
+
+* iGPU内存->128M
+
+* 初始化IGPU->开启
+
+### USB设置
+
+* Intel USB 2.0 EHCI Controller->开启
+
+* Legacy USB 支持->开启
+
+* Legacy USB 3.0 支持->开启
+
+* Intel xHCI模式->自动(开启会导致xp/vista的USB 3.0失效)
+
+* EHCI Hand-off->开启
+
+### CSM
+
+* 启动设备控制->UEFI 与 Legacy
+
+### 安全启动
+
+* 操作系统类型->其他操作系统
+
 ## Bootloader 选择
 
 * ~~OpenCore 用于引导黑苹果以及refind~~ 
@@ -109,7 +143,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * xorboot用于引导legacy系统(vista,win7)、refind(启动xp)以及OpenShell工具
   
-  * xorboot的安装使用极其简单，完全GUI配置，0代码，添加vista和win7的bootmgfw.efi文件、refind的refind_x64.efi文件以及OpenShell.efi即可。
+  * xorboot的安装使用极其简单，完全GUI配置，0代码，添加vista和win7的bootmgfw.efi文件、refind的refind_x64.efi文件以及OpenShell.efi工具即可。
   
   * refind.conf 重要设置
     
@@ -122,21 +156,91 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * OpenShell工具及其重要，后面讲。
 
-## 10.8下的声卡驱动
+## 时间同步
 
-* 华硕的 p8z77m-pro主板的声卡是alc892，AppleALC对于此声卡的支持起始于10.9，笔者自行修改编译了支持alc892声卡在10.8下的AppleALC，在EFI里，直接用即可。(已经向原作者提交了pr，希望能够合并到主分支，链接如下：https://github.com/acidanthera/AppleALC/pull/947)
+- 在Windows下导入仓库中的WinUTCOn.reg文件，重启即可解决Windows时间不对的问题。
+
+## 核显驱动
+
+* 加入Whatevergreen.kext
+
+* 按照下图注入igpu信息即可，设备地址用Hackintool获取
   
-  ---
+  ![](images/OpenCore/igpu.png)
+
+## 声卡驱动
+
+* 10.8
   
-  2026.5.24更新：原作者已合并到主分支，直接下载最新的官方AppleALC即可。
+  > 华硕的 p8z77m-pro主板的声卡是alc892，AppleALC对于此声卡的支持起始于10.9，笔者自行修改编译了支持alc892声卡在10.8下使用的AppleALC，在EFI里，直接用即可。(已经向原作者提交了pr，希望能够合并到主分支，链接如下：https://github.com/acidanthera/AppleALC/pull/947)
+  > 
+  > ---
+  > 
+  > 2026.5.24更新：原作者已将pr合并到主分支，直接下载最新的官方AppleALC即可。
+
+* 加入AppleALC.kext
+  
+  按照下图注入hda信息即可，设备地址用Hackintool获取
+  
+  ![](images/OpenCore/hda.png)
+
+## 独显驱动
+
+* 加入Whatevergreen.kext。无需任何其他配置。
+
+## 电源管理
+
+* 按照下图启用如下补丁
+  
+  ![](images/OpenCore/pm2.png)
+
+* 运行仓库中的ssdtPRGen.sh生成SSDT，重命名为SSDT-PM.aml，加入到OC的ACPI文件夹并在config中启用。
+
+* 禁用刚才启用的补丁
+  
+  ![](images/OpenCore/pm1.png)
+
+## AppleVTD
+
+> 在新系统上(如macOS 13)，Intel VT-d的开启变得非常重要，如不开启，可能导致网卡失效。雷电设备也和VT-d高度相关，下面是开启教程。
+
+* 在BIOS中开启vt-d选项
+
+* 在OC的Kernel->Patch中禁用DisableIoMapper选项并重启
+  
+  ![](images/AppleVTD/vtd1.png)
+
+* 用MaciASL导出DMAR表并另存为dsl格式
+  
+  ![](images/AppleVTD/vtd2.png)
+  
+  ![](images/AppleVTD/vtd3.png)
+
+* 打开dsl文件。删除所有[Reserved Memory Region]区域并另存为SSDT-DMAR，格式选择aml
+  
+  ![](images/AppleVTD/vtd4.png)
+  
+  ![](images/AppleVTD/vtd5.png)
+
+* 将SSDT-DMAR.aml放入OC的ACPI文件夹中并在config中启用
+  
+  ![](images/AppleVTD/vtd6.png)
+
+* 在OC的config中，找到ACPI->Delete，加入如下条目以阻止原生DMAR表载入
+  
+  ![](images/AppleVTD/vtd7.png)
+
+* 重启，打开ioreg工具，如图则为AppleVTD加载成功
+  
+  ![](images/AppleVTD/vtd8.png)
 
 ## 10.8下实现4K 60hz Hidpi
 
-> 首先Mac系统是在10.9.3开始正式支持的4K 60hz hidpi，10.7和10.8只支持低分辨率的Retina，但是物理分辨率无法输出4K，因为当时的白苹果配备的显卡也没有支持4K输出的，黑苹果可用显卡要输出4K，最早的是Nvidia gtx 600系列，而600系列支持的最初版Mac系统是10.8，故而想要4K 60hz hidpi，最起码需要10.8系统起步，显卡支持4K输出是最基本的前提要求。因为10.8没有原生支持4K输出，所以要通过第三方方案实现4K 60hz hidpi。
+> 首先Mac系统是在10.9.3开始正式支持的4K 60hz hidpi，10.7和10.8只支持低分辨率的Retina，但是物理分辨率无法输出4K，因为当时的白苹果配备的显卡也没有支持4K输出的，黑苹果可用显卡要输出4K，最早的是Nvidia GTX 600系列，而600系列支持的最初版Mac系统是10.8，故而想要实现4K 60hz hidpi，最起码需要10.8系统起步，显卡支持4K输出是最基本的前提要求。因为10.8没有原生支持4K输出，所以要通过第三方方案实现4K 60hz hidpi。
 
 ### 实现方案
 
-> 由于笔者的gtx 770 在10.8下最大只能识别2K分辨率，所以要先解决4K输出，再通过命令开启hidpi，具体方案如下。
+> 由于笔者的GTX 770 在10.8下最高只能识别2K分辨率，所以要先解决4K输出，再通过命令开启hidpi，具体方案如下。
 
 * 安装Nvidia webdriver，仓库里已经提供。
 
@@ -152,7 +256,37 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 #### 至此，您已经成功的在10.8下实现了4K 60hz hidpi。
 
-## 关于SMBIOS选择
+## 关于macOS 12-macOS15
+
+> 这一套硬件配置原生支持截止到macOS 11，macOS 12缺失了Intel hd 4000以及Nvidia GTX 770的驱动。macOS 13在前者的基础上，缺失了AVX2指令集，macOS 14和macOS 15在前者基础上缺失了博通的网卡驱动，本章我们解决这些问题。
+
+* OC的NVRAM下设置如下boot-args
+  
+  ![](images/OpenCore/oclp1.png)
+
+* OC的NVRAM下设置如下条目以关闭sip
+  
+  ![](images/OpenCore/oclp2.png)
+
+* OC的Misc下关闭安全启动
+  
+  ![](images/OpenCore/oclp3.png)
+
+* 按照下图加入kexts并在config中根据系统版本启用(注意顺序)
+  
+  ![](images/OpenCore/oclp4.png)
+
+* 按照下图根据系统版本禁用内置kext
+  
+  ![](images/OpenCore/oclp5.png)
+
+* 重启
+
+* 使用oclp打补丁并重启
+
+> 至此，您的macOS 12-macOS 15系统已完全正常
+
+## SMBIOS选择
 
 ### 安装系统
 
@@ -162,7 +296,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 设置SMBIOS为iMac13,2
 
-* OpenCore下加入如图补丁以跳过board-id检查(EFI文件夹里有完整config.plist文件)
+* OpenCore下加入如图补丁以跳过board-id检查(EFI文件夹里有完整的config.plist文件)
   
   ![](images/OpenCore/Skip%20Board%20ID%20check.png)
 
@@ -178,7 +312,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 见EFI
 
-## 解决10.8必须切换到10.9(或关机)，再切换其他系统，否则其他系统wifi失效问题
+## 解决10.8必须切换到10.9(或关机)，再切换其他系统，否则其他系统wifi失效的问题
 
 > 这个问题的成因是OS X 10.8的94630驱动自身有bug，不完美，据说当年的iMac在10.8上用过94360，镜像是定制的，我没下载到。于是我添加了一张bcm94331csax专门用于10.8。
 
@@ -188,7 +322,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
   
   ![](images/OpenCore/Change%20_OSI%20from%20Darwin%20to%20Darw12.png)
 
-* 加入如下SSDT以根据系统版本禁用多余网卡(10.8禁用fenvi-t919，其他macOS禁用bcm94331)
+* 加入如下SSDT以根据系统版本禁用多余网卡(10.8禁用fenvi-t919，其他macOS禁用bcm94331)，路径在ioreg工具中查看并在SSDT中修改。
   
   ```
   DefinitionBlock ("", "SSDT", 2, "HACK", "WIFISEL", 0x00000000)
@@ -300,11 +434,13 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
   }
   ```
 
+* 在config中启用以上SSDT。
+
 * 在其他需要判断OS类型的SSDT中，将If (_OSI ("Darwin"))改成If ((_OSI ("Darwin") || _OSI ("Darw12")))
 
 ### 至此，随便切换系统，wifi也不会失效了。
 
-## 解决10.8-10.11关于本机不显示年份
+## 解决10.8-10.11关于本机不显示年份的问题
 
 > macOS关于本机的年份是通过API返回的，这些系统由于年代久远，已无法正常访问API网站，所以我们要手动编辑本地文件以添加年份。
 
@@ -316,7 +452,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 记录返回值，如 iMac（27 英寸，2012 年末）
 
-* 打开SMBIOS年份修复文件夹中的的plist文件，注意系统版本，修改序列号后四位，语言，年份三个信息。修改好的类似下图，两张图分别为10.8的和10.9-10.11的
+* 打开SMBIOS年份修复文件夹中的的plist文件，注意系统版本，修改序列号后四位，语言，机型三个信息。修改好的类似下图，两张图分别为10.8的和10.9-10.11的
   
   ![](images/SMBIOS/10.8.png)  
   
@@ -324,25 +460,25 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 将改好的plist文件覆盖到 ~/Library/Preferences并重启，你会发现OS X 10.8-10.11的关于本机年份恢复了
 
-## 解决csm开启video legacy以后，OC选择界面分辨率极低，macOS图标扁平，Windows图标偏移向左上角等问题
+## 解决csm中开启video legacy以后，OC选择界面分辨率极低，macOS启动logo扁平，Windows启动logo偏移向左上角等问题
 
-> 众所周知，xp/vista/win7是不能在纯UEFI模式下启动的，需要设置csm下的video为legacy，这样做的代价是无法获得高清的主板logo，Windows logo，macOS logo以及引导器高清图标，并且Windows logo会偏移到左上角，macOS logo会扁平。现在我们解决这个问题。
+> 众所周知，xp/vista/win7是不能在纯UEFI模式下启动的，需要设置csm下的video为legacy，这样做的代价是无法获得高清的主板logo，Windows启动logo，macOS启动logo以及引导器高清图标，并且Windows启动logo会偏移到左上角，macOS 启动logo会扁平。现在我们解决这个问题。
 
 > 前提：1 机器支持UEFI    2 显卡支持UEFI或者刷过vbios以支持UEFI
 
-> 核心思路：永远不要想着在纯UEFI下启动xp/vista/win7。我们使用OC引导win8-win11以及OS X 10.8-macOS 15，csm的video设置为UEFI。使用xorboot引导xp/vista/win7，csm的video设置为legacy，这样自然是完美的，传统操作系统和现代操作系统各得其所。我们要做的就是把这个修改bios的动作自动化。
+> 核心思路：永远不要想着在纯UEFI下启动xp/vista/win7。我们使用OC引导win8-win11以及OS X 10.8-macOS 15，csm的video设置为UEFI。使用xorboot引导xp/vista/win7，csm的video设置为legacy，这样自然是完美的，传统操作系统和现代操作系统各得其所。但是需要修改bios设置和第一启动项，很麻烦，我们要做的就是把这个修改bios设置和第一启动项的动作自动化。
 
-* 升级显卡的GOP模块(如果你的显卡在纯UEFI下可以点亮并且可以全高清显示OC图标，Windows/macOS的logo也不会偏移，扁平，则跳过此步骤。笔者的gtx 770开纯UEFI点不亮)
+* 升级显卡的GOP模块(如果你的显卡在纯UEFI下可以点亮并且可以全高清显示OC图标，Windows/macOS的启动logo也不会偏移，扁平，则跳过此步骤。笔者的GTX 770开纯UEFI点不亮)
   
   * 用GPU-Z导出显卡vbios
   
-  * 打开笔者提供的GOP_Updater，将vbios文件拖拽到GOPupd.bat上，按照提示升级GOP模块，会生成一个新的vbios，把它重命名为1.rom以方便刷写
+  * 打开仓库中的GOP_Updater，将vbios文件拖拽到GOPupd.bat上，按照提示升级GOP模块，会生成一个新的vbios，把它重命名为1.rom以方便刷写
   
   * 使用nvflash刷写新的vbios，Windows打开管理员模式的终端，输入如下命令
     
     > nvflash.exe -6 1.rom
 
-* 主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy only和UEFI only分别对应的数字如下图，UEFI only 0x1，legacy only 0x2
+* 到主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy only和UEFI only分别对应的数字如下图，UEFI only 0x1，legacy only 0x2
   
   ![](images/csm.png)
 
@@ -350,7 +486,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 * 准备startup.nsh脚本，这个脚本做两件事
   
-  * 用setup_var修改csm选项，如
+  * 用setup_var修改csm中的video选项，如
     
     ```
     setup_var.efi -r Setup:0x8CE=0x02
