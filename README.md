@@ -44,7 +44,7 @@ https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed01836
 
 > 根据Dortania的OpenCore文档，Kepler架构的Nvidia显卡可以原生支持OS X 10.8-macOS 11，更新版本用oclp搞定。Kepler也完美支持XP-Win11。文档中还提到AMD的HD 7000系列和HD 8000系列可以原生支持OS X 10.8-macOS 12，但笔者亲测，HD 7750在OS X 10.8.5下，无法进入桌面，仅显示白屏+鼠标指针。网络上有遇到同样问题的。链接如下：https://www.insanelymac.com/forum/topic/290733-hd-7950-doesnt-work-on-mac-os-x-1084/。
 
-### 无线网卡+蓝牙
+## 无线网卡+蓝牙
 
 > 根据Dortania的OpenCore文档，fenvi-t919是很好的黑苹果无线网卡，无线+蓝牙原生免驱，Windows下win7-win11也没问题。XP/Vista的wifi/蓝牙也不重要了。但是要注意fenvi-t919在10.8下有严重bug。重启只能进入10.9(或关机)再切换其他系统，否则其他系统wifi会失效(包括Windows)，所以需要一张单独用于10.8的无线网卡并在10.8下屏蔽fenvi-t919，笔者选择的bcm94331csax，很便宜，10.8下完美免驱。这张卡我们不插蓝牙线，形成双无线网卡+单蓝牙架构，bcm94331csax的wifi还可以在XP下用。后文会详解如何使用SSDT屏蔽多余无线网卡，实现OS X 10.8下使用bcm94331csax，OS X 10.9-macOS 15下使用fenvi-t919。
 
