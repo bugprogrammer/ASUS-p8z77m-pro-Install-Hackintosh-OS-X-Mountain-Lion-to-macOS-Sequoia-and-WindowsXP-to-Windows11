@@ -6,7 +6,7 @@
 
 # B站演示视频
 
-https://www.bilibili.com/video/BV1CCkmB2EDs/?vd_source=91b62905f2413020e8ed018369ab5e26
+[在一台ivy bridge计算机上安装20个操作系统(内录4K Retina呈现，推荐电脑全屏观看)_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1QkGX6qE9q)
 
 # 配置清单
 
