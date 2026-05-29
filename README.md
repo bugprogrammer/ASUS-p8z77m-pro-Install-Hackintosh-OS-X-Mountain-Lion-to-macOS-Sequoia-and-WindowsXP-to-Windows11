@@ -2,7 +2,7 @@
 
 > macOS 26是Intel Mac可以使用的最后一个macOS版本，在即将到来的WWDC 2026上，Apple将发布macOS 27，届时将仅支持Apple Silicon Macs。在黑苹果即将成为历史的时刻，笔者在一台配备了4K显示器的ivy bridge计算机上以物理机的形式安装并运行了包括Windows XP-Windows11的所有Windows操作系统以及所有支持4K 60hz hidpi的intel macOS操作系统。
 
-![](images/desktop/操作系统九宫格.png)
+![](images/desktop/操作系统九宫格.jpg)
 
 # B站演示视频
 
@@ -166,7 +166,7 @@
 
 * 按照下图注入igpu信息即可，设备地址用Hackintool获取
   
-  ![](images/OpenCore/igpu.png)
+  ![](images/OpenCore/igpu.jpg)
 
 ## 声卡驱动
 
@@ -182,7 +182,7 @@
   
   按照下图注入hda信息即可，设备地址用Hackintool获取
   
-  ![](images/OpenCore/hda.png)
+  ![](images/OpenCore/hda.jpg)
 
 ## 独显驱动
 
@@ -192,13 +192,13 @@
 
 * 按照下图启用如下补丁
   
-  ![](images/OpenCore/pm2.png)
+  ![](images/OpenCore/pm2.jpg)
 
 * 运行仓库中的ssdtPRGen.sh生成SSDT，重命名为SSDT-PM.aml，加入到OC的ACPI文件夹并在config中启用。
 
 * 禁用刚才启用的补丁
   
-  ![](images/OpenCore/pm1.png)
+  ![](images/OpenCore/pm1.jpg)
 
 ## AppleVTD
 
@@ -208,31 +208,31 @@
 
 * 在OC的Kernel->Patch中禁用DisableIoMapper选项并重启
   
-  ![](images/AppleVTD/vtd1.png)
+  ![](images/AppleVTD/vtd1.jpg)
 
 * 用MaciASL导出DMAR表并另存为dsl格式
   
-  ![](images/AppleVTD/vtd2.png)
+  ![](images/AppleVTD/vtd2.jpg)
   
-  ![](images/AppleVTD/vtd3.png)
+  ![](images/AppleVTD/vtd3.jpg)
 
 * 打开dsl文件。删除所有[Reserved Memory Region]区域并另存为SSDT-DMAR，格式选择aml
   
-  ![](images/AppleVTD/vtd4.png)
+  ![](images/AppleVTD/vtd4.jpg)
   
-  ![](images/AppleVTD/vtd5.png)
+  ![](images/AppleVTD/vtd5.jpg)
 
 * 将SSDT-DMAR.aml放入OC的ACPI文件夹中并在config中启用
   
-  ![](images/AppleVTD/vtd6.png)
+  ![](images/AppleVTD/vtd6.jpg)
 
 * 在OC的config中，找到ACPI->Delete，加入如下条目以阻止原生DMAR表载入
   
-  ![](images/AppleVTD/vtd7.png)
+  ![](images/AppleVTD/vtd7.jpg)
 
 * 重启，打开ioreg工具，如图则为AppleVTD加载成功
   
-  ![](images/AppleVTD/vtd8.png)
+  ![](images/AppleVTD/vtd8.jpg)
 
 ## 10.8下实现4K 60hz Hidpi
 
@@ -262,23 +262,23 @@
 
 * OC的NVRAM下设置如下boot-args
   
-  ![](images/OpenCore/oclp1.png)
+  ![](images/OpenCore/oclp1.jpg)
 
 * OC的NVRAM下设置如下条目以关闭sip
   
-  ![](images/OpenCore/oclp2.png)
+  ![](images/OpenCore/oclp2.jpg)
 
 * OC的Misc下关闭安全启动
   
-  ![](images/OpenCore/oclp3.png)
+  ![](images/OpenCore/oclp3.jpg)
 
 * 按照下图加入kexts并在config中根据系统版本启用(注意顺序)
   
-  ![](images/OpenCore/oclp4.png)
+  ![](images/OpenCore/oclp4.jpg)
 
 * 按照下图根据系统版本禁用内置kext
   
-  ![](images/OpenCore/oclp5.png)
+  ![](images/OpenCore/oclp5.jpg)
 
 * 重启
 
@@ -298,7 +298,7 @@
 
 * OpenCore下加入如图补丁以跳过board-id检查(EFI文件夹里有完整的config.plist文件)
   
-  ![](images/OpenCore/Skip%20Board%20ID%20check.png)
+  ![](images/OpenCore/Skip%20Board%20ID%20check.jpg)
 
 # 2025.11.15更新
 
@@ -320,9 +320,7 @@
 
 * 在OC的Kernel Patch下添加如下条目以实现macOS版本区分(10.8->Darw12，其他->Darwin)
   
-  ![](images/OpenCore/Change%20_OSI%20from%20Darwin%20to%20Darw12.png)
-
-* 加入如下SSDT以根据系统版本禁用多余网卡(10.8禁用fenvi-t919，其他macOS禁用bcm94331)，路径在ioreg工具中查看并在SSDT中修改。
+  ![](images/OpenCore/Change%20_OSI%20from%20Darwin%20to%20Darw12.jpg)
   
   ```
   DefinitionBlock ("", "SSDT", 2, "HACK", "WIFISEL", 0x00000000)
@@ -454,9 +452,9 @@
 
 * 打开SMBIOS年份修复文件夹中的的plist文件，注意系统版本，修改序列号后四位，语言，机型三个信息。修改好的类似下图，两张图分别为10.8的和10.9-10.11的
   
-  ![](images/SMBIOS/10.8.png)  
+  ![](images/SMBIOS/10.8.jpg)  
   
-  ![](images/SMBIOS/10.9-10.11.png)
+  ![](images/SMBIOS/10.9-10.11.jpg)
 
 * 将改好的plist文件覆盖到 ~/Library/Preferences并重启，你会发现OS X 10.8-10.11的关于本机年份恢复了
 
@@ -480,7 +478,7 @@
 
 * 到主板官网下载bios，用set_dump GUI打开，搜索csm下面video的偏移量，笔者的是0x8CE，并且注意legacy only和UEFI only分别对应的数字如下图，UEFI only 0x1，legacy only 0x2
   
-  ![](images/csm.png)
+  ![](images/csm.jpg)
 
 * 修改BIOS设置，将csm打开，启动设备控制选择UEFI and Legacy，这样可以保证mbr下的xp系统的启动。并且把第一第二启动项分别设置为OC和xorboot。
 
@@ -555,11 +553,11 @@
 
 * 在OC的Tools文件夹中加入OpenShell.efi文件并在config中添加此条目，参数为-nointerrupt -noconsolein -noconsoleout
   
-  ![](images/OpenCore/OpenShell.png)
+  ![](images/OpenCore/OpenShell.jpg)
 
 * xorboot加入OpenShell条目，参数同上
   
-  ![](images/xorboot/xorboot1.png)
+  ![](images/xorboot/xorboot1.jpg)
 
 ### 至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行同分区根目录的startup.nsh脚本。
 
@@ -567,52 +565,52 @@
 
 ## OpenCore
 
-![](images/OpenCore/OC1.png)
+![](images/OpenCore/OC1.jpg)
 
-![](images/OpenCore/OC2.png)
+![](images/OpenCore/OC2.jpg)
 
 ## XorBoot
 
-![](images/xorboot/xorboot2.png)
+![](images/xorboot/xorboot2.jpg)
 
 # 系统桌面截图
 
-![](images/desktop/xp.png)
+![](images/desktop/xp.jpg)
 
-![](images/desktop/vista.png)
+![](images/desktop/vista.jpg)
 
-![](images/desktop/win7.png)
+![](images/desktop/win7.jpg)
 
-![](images/desktop/win8.png)
+![](images/desktop/win8.jpg)
 
-![](images/desktop/win8.1.png)
+![](images/desktop/win8.1.jpg)
 
-![](images/desktop/win10.png)
+![](images/desktop/win10.jpg)
 
-![](images/desktop/win11.png)
+![](images/desktop/win11.jpg)
 
-![](images/desktop/osx%2010.8.png)
+![](images/desktop/osx%2010.8.jpg)
 
-![](images/desktop/osx%2010.9.png)
+![](images/desktop/osx%2010.9.jpg)
 
-![](images/desktop/osx%2010.10.png)
+![](images/desktop/osx%2010.10.jpg)
 
-![](images/desktop/osx%2010.11.png)
+![](images/desktop/osx%2010.11.jpg)
 
-![](images/desktop/macOS%2010.12.png)
+![](images/desktop/macOS%2010.12.jpg)
 
-![](images/desktop/macOS%2010.13.png)
+![](images/desktop/macOS%2010.13.jpg)
 
-![](images/desktop/macOS%2010.14.png)
+![](images/desktop/macOS%2010.14.jpg)
 
-![](images/desktop/macOS%2010.15.png)
+![](images/desktop/macOS%2010.15.jpg)
 
-![](images/desktop/macOS%2011.png)
+![](images/desktop/macOS%2011.jpg)
 
-![](images/desktop/macOS%2012.png)
+![](images/desktop/macOS%2012.jpg)
 
-![](images/desktop/macOS%2013.png)
+![](images/desktop/macOS%2013.jpg)
 
-![](images/desktop/macOS%2014.png)
+![](images/desktop/macOS%2014.jpg)
 
-![](images/desktop/macOS%2015.png)
+![](images/desktop/macOS%2015.jpg)
