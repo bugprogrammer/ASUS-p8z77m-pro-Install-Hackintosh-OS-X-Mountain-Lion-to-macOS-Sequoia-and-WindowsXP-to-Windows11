@@ -555,7 +555,7 @@
   
   ![](images/OpenCore/OpenShell.jpg)
 
-* xorboot加入OpenShell条目，参数同上
+* 在xorboot中加入OpenShell条目，参数同上
   
   ![](images/xorboot/xorboot1.jpg)
 
