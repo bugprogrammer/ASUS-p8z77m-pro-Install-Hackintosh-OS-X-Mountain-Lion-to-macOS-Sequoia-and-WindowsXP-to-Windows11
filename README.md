@@ -42,6 +42,10 @@
   - [解决10.8-10.11关于本机不显示年份的问题](#解决108-1011关于本机不显示年份的问题)
   - [解决csm中开启video legacy以后，OC选择界面分辨率极低，macOS启动logo扁平，Windows启动logo偏移向左上角等问题](#解决csm中开启video-legacy以后oc选择界面分辨率极低macos启动logo扁平windows启动logo偏移向左上角等问题)
     - [至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行同分区根目录的startup.nsh脚本。](#至此已完成自动化设置bios的第一启动项并且控制csm中的video选项openshellefi会自动运行同分区根目录的startupnsh脚本)
+- [2026.5.31更新](#2026531更新)
+  - [老系统浏览器](#老系统浏览器)
+    - [Windows](#windows)
+    - [Mac OS X/OS X/macOS](#mac-os-xos-xmacos)
 - [引导器截图](#引导器截图)
   - [OpenCore](#opencore)
   - [XorBoot](#xorboot)
@@ -603,6 +607,14 @@
   ![](images/xorboot/xorboot1.jpg)
 
 ### 至此，已完成自动化设置bios的第一启动项并且控制csm中的video选项，OpenShell.efi会自动运行同分区根目录的startup.nsh脚本。
+
+# 2026.5.31更新
+## 老系统浏览器
+### Windows
+* supermium(Windows XP, 2003, Vista, 7, 8 and 8.1) https://github.com/win32ss/supermium
+
+### Mac OS X/OS X/macOS
+* chromium-legacy(Mac OS X 10.7，OS X 10.8-10.11，macOS 10.12-10.14) https://github.com/blueboxd/chromium-legacy
 
 # 引导器截图
 
