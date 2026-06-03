@@ -53,7 +53,7 @@
     - [修改BIOS(解锁CFG Lock并解锁部分隐藏选项)](#修改bios解锁cfg-lock并解锁部分隐藏选项)
       - [至此，解锁了CFG Lock、CSM下的video选项以及Intel VT-d的修改版BIOS已制作完成](#至此解锁了cfg-lockcsm下的video选项以及intel-vt-d的修改版bios已制作完成)
     - [刷写修改版BIOS](#刷写修改版bios)
-    - [至此，修改版BIOS已经刷写成功，CFG Lock成功解锁，请在OC的config中禁用Kernel-\>Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock](#至此修改版bios已经刷写成功cfg-lock成功解锁请在oc的config中禁用kernel-quirks下的applecpupmcfglock以及applexcpmcfglock)
+    - [至此，修改版BIOS已经刷写成功，CFG Lock已经成功解锁，请在OC的config中禁用Kernel-\>Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock两个选项](#至此修改版bios已经刷写成功cfg-lock已经成功解锁请在oc的config中禁用kernel-quirks下的applecpupmcfglock以及applexcpmcfglock两个选项)
 - [引导器截图](#引导器截图)
   - [OpenCore](#opencore)
   - [XorBoot](#xorboot)
@@ -632,10 +632,12 @@
 > 笔者的主板是ASUS P8Z77M Pro，这款主板无法搜索出CFG Lock的偏移量，所以需要修改BIOS并刷入以解锁CFG Lock，笔者在仓库中提供了解锁后的BIOS，位于bios文件夹中。
 ### 所需设备
 * U盘1个
+
 ### 所需工具(位于bios文件夹)
 * UEFIPatch
 * AMIBCP
 * UEFITool
+
 ### 修改BIOS(解锁CFG Lock并解锁部分隐藏选项)
 > 在Windows11下操作
 * 下载官方BIOS文件备用
@@ -662,13 +664,16 @@
 * 点击File->Save image file,名称为P8Z77MP.CAP，点击保存
 ![](images/bios/bios12.png)
 ![](images/bios/bios13.png)
+
 #### 至此，解锁了CFG Lock、CSM下的video选项以及Intel VT-d的修改版BIOS已制作完成
+
 ### 刷写修改版BIOS
 * U盘格式化为FAT32格式，分区表类型为MBR，将处理好的P8Z77MP.CAP拷贝到U盘根目录(文件名必须正确)
 * 将U盘插入如下USB口(必须是这个口)
 ![](images/bios/bios14.png)
 * 关机，打开机箱侧盖，按住下图中的BIOS_FLBK按键3s，黄灯开始闪烁，等待黄灯熄灭，BIOS刷写成功。
 ![](images/bios/bios15.png)
+
 ### 至此，修改版BIOS已经刷写成功，CFG Lock已经成功解锁，请在OC的config中禁用Kernel->Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock两个选项
 
 # 引导器截图
