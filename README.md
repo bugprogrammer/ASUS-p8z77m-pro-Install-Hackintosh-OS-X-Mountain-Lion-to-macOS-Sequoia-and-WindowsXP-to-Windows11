@@ -669,7 +669,7 @@
 ![](images/bios/bios14.png)
 * 关机，打开机箱侧盖，按住下图中的BIOS_FLBK按键3s，黄灯开始闪烁，等待黄灯熄灭，BIOS刷写成功。
 ![](images/bios/bios15.png)
-### 至此，修改版BIOS已经刷写成功，CFG Lock成功解锁，请在OC的config中禁用Kernel->Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock
+### 至此，修改版BIOS已经刷写成功，CFG Lock已经成功解锁，请在OC的config中禁用Kernel->Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock两个选项
 
 # 引导器截图
 
