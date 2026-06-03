@@ -727,7 +727,7 @@
             <key>Quirks</key>
             <dict>
                 <key>AppleCpuPmCfgLock</key>
-                <true/>
+                <false/>
                 <key>AppleXcpmCfgLock</key>
                 <false/>
                 <key>AppleXcpmExtraMsrs</key>
@@ -978,7 +978,7 @@
                     <key>Comment</key>
                     <string>ControlMsrE2.efi</string>
                     <key>Enabled</key>
-                    <false/>
+                    <true/>
                     <key>Flavour</key>
                     <string>Auto</string>
                     <key>FullNvramAccess</key>

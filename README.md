@@ -46,10 +46,19 @@
   - [老系统浏览器](#老系统浏览器)
     - [Windows](#windows)
     - [Mac OS X/OS X/macOS](#mac-os-xos-xmacos)
+- [2026.6.3更新](#202663更新)
+  - [解锁CFG Lock](#解锁cfg-lock)
+    - [所需设备](#所需设备)
+    - [所需工具(位于bios文件夹)](#所需工具位于bios文件夹)
+    - [修改BIOS(解锁CFG Lock并解锁部分隐藏选项)](#修改bios解锁cfg-lock并解锁部分隐藏选项)
+      - [至此，解锁了CFG Lock、CSM下的video选项以及Intel VT-d的修改版BIOS已制作完成](#至此解锁了cfg-lockcsm下的video选项以及intel-vt-d的修改版bios已制作完成)
+    - [刷写修改版BIOS](#刷写修改版bios)
+    - [至此，修改版BIOS已经刷写成功，CFG Lock成功解锁，请在OC的config中禁用Kernel-\>Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock](#至此修改版bios已经刷写成功cfg-lock成功解锁请在oc的config中禁用kernel-quirks下的applecpupmcfglock以及applexcpmcfglock)
 - [引导器截图](#引导器截图)
   - [OpenCore](#opencore)
   - [XorBoot](#xorboot)
 - [系统桌面截图](#系统桌面截图)
+
 
 # B站演示视频
 
@@ -122,6 +131,8 @@
 * 变频
 
 * AppleVTD
+
+* CFG Lock解锁 
 
 ## bug
 
@@ -615,6 +626,50 @@
 
 ### Mac OS X/OS X/macOS
 * chromium-legacy(Mac OS X 10.7，OS X 10.8-10.11，macOS 10.12-10.14) https://github.com/blueboxd/chromium-legacy
+
+# 2026.6.3更新
+## 解锁CFG Lock
+> 笔者的主板是ASUS P8Z77M Pro，这款主板无法搜索出CFG Lock的偏移量，所以需要修改BIOS并刷入以解锁CFG Lock，笔者在仓库中提供了解锁后的BIOS，位于bios文件夹中。
+### 所需设备
+* U盘1个
+### 所需工具(位于bios文件夹)
+* UEFIPatch
+* AMIBCP
+* UEFITool
+### 修改BIOS(解锁CFG Lock并解锁部分隐藏选项)
+> 在Windows11下操作
+* 下载官方BIOS文件备用
+* 将官方BIOS重命名为bios.CAP并拷贝到UEFIPatch文件夹
+![](images/bios/bios1.png)
+* 在当前目录打开终端并输入如下命令以解锁CFG Lock，解锁后的文件位于同目录，名为bios.CAP.patched
+```
+.\UEFIPatch .\bios.CAP
+```
+![](images/bios/bios2.png)
+![](images/bios/bios3.png)
+* 将bios.CAP.patched重命名为P8Z77MP_UNLOCK.CAP
+* 用AMIBCP打开P8Z77MP_UNLOCK.CAP，将需要解锁的选项(如CSM下的video选项，intel vt-d等)的Access/Use设置为USER并保存
+![](images/bios/bios4.png)
+![](images/bios/bios5.png)
+* 用UEFITool打开处理后的P8Z77MP_UNLOCK.CAP，导航到BIOS region，点击右键，选择Extract as is...，文件名填1，点击保存。得到文件1.rgn
+![](images/bios/bios6.png)
+![](images/bios/bios7.png)
+![](images/bios/bios8.png)
+* 用UEFITool打开官网下载的BIOS，导航到BIOS region，点击右键，选择Replace as is...,选择1.rgn，点击打开
+![](images/bios/bios9.png)
+![](images/bios/bios10.png)
+![](images/bios/bios11.png)
+* 点击File->Save image file,名称为P8Z77MP.CAP，点击保存
+![](images/bios/bios12.png)
+![](images/bios/bios13.png)
+#### 至此，解锁了CFG Lock、CSM下的video选项以及Intel VT-d的修改版BIOS已制作完成
+### 刷写修改版BIOS
+* U盘格式化为FAT32格式，分区表类型为MBR，将处理好的P8Z77MP.CAP拷贝到U盘根目录(文件名必须正确)
+* 将U盘插入如下USB口(必须是这个口)
+![](images/bios/bios14.png)
+* 关机，打开机箱侧盖，按住下图中的BIOS_FLBK按键3s，黄灯开始闪烁，等待黄灯熄灭，BIOS刷写成功。
+![](images/bios/bios15.png)
+### 至此，修改版BIOS已经刷写成功，CFG Lock成功解锁，请在OC的config中禁用Kernel->Quirks下的AppleCpuPmCfgLock以及AppleXcpmCfgLock
 
 # 引导器截图
 
