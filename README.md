@@ -643,14 +643,14 @@
 ![](images/bios/bios1.png)
 * 在当前目录打开终端并输入如下命令以解锁CFG Lock，解锁后的文件位于同目录，名为bios.CAP.patched
 ```
-.\UEFIPatch .\bios.CAP
+.\UEFIPatch.exe .\bios.CAP
 ```
 ![](images/bios/bios2.png)
 ![](images/bios/bios3.png)
 * 将bios.CAP.patched重命名为P8Z77MP_UNLOCK.CAP
 * 用AMIBCP打开P8Z77MP_UNLOCK.CAP，将需要解锁的选项(如CSM下的video选项，intel vt-d等)的Access/Use设置为USER并保存
-![](images/bios/bios4.png)
 ![](images/bios/bios5.png)
+![](images/bios/bios4.png)
 * 用UEFITool打开处理后的P8Z77MP_UNLOCK.CAP，导航到BIOS region，点击右键，选择Extract as is...，文件名填1，点击保存。得到文件1.rgn
 ![](images/bios/bios6.png)
 ![](images/bios/bios7.png)
