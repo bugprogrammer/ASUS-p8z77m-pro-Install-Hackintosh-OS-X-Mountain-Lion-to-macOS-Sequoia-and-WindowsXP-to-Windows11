@@ -67,7 +67,9 @@
 
 # B站演示视频
 
-[在一台 ivy bridge 计算机上安装 20 个操作系统版本 (内录 4K Retina 呈现，推荐电脑全屏观看)\_哔哩哔哩\_bilibili](https://www.bilibili.com/video/BV1QkGX6qE9q)
+[20个版本的Windows/macOS共存的系统博物馆](https://www.bilibili.com/video/BV1QkGX6qE9q)
+
+[多系统博物馆的新展品 - macOS Tahoe](https://www.bilibili.com/video/BV1dzn668E2J)
 
 # 配置清单
 
